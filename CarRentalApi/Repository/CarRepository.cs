@@ -11,11 +11,13 @@
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public CarRepository(AppDbContext context, IWebHostEnvironment environment)
+        public CarRepository(AppDbContext context, IWebHostEnvironment environment, IHttpContextAccessor  httpContextAccessor)
         {
             _context = context;
             _environment = environment;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<Car>> GetAllCarsAsync()
@@ -36,13 +38,31 @@
             return car;
         }
 
+        //public async Task<string> SaveImageAsync(IFormFile imageFile)
+        //{
+        //    var folderPath = Path.Combine(_environment.WebRootPath ?? "wwwroot", "Uploads");
+        //    if (!Directory.Exists(folderPath))
+        //        Directory.CreateDirectory(folderPath);
+
+        //    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+        //    var fullPath = Path.Combine(folderPath, uniqueFileName);
+
+        //    using (var stream = new FileStream(fullPath, FileMode.Create))
+        //    {
+        //        await imageFile.CopyToAsync(stream);
+        //    }
+
+        //    return Path.Combine("Uploads", uniqueFileName).Replace("\\", "/");
+        //}
+
         public async Task<string> SaveImageAsync(IFormFile imageFile)
         {
             var folderPath = Path.Combine(_environment.WebRootPath ?? "wwwroot", "Uploads");
+
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
-            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+            var uniqueFileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
             var fullPath = Path.Combine(folderPath, uniqueFileName);
 
             using (var stream = new FileStream(fullPath, FileMode.Create))
@@ -50,8 +70,13 @@
                 await imageFile.CopyToAsync(stream);
             }
 
-            return Path.Combine("Uploads", uniqueFileName).Replace("\\", "/");
+            // Build full URL
+            var request = httpContextAccessor.HttpContext?.Request;
+            var baseUrl = $"{request?.Scheme}://{request?.Host}";
+
+            return $"{baseUrl}/Uploads/{uniqueFileName}";
         }
+
     }
 
 }

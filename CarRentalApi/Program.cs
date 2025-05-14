@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // 2. Register your repositories/services
 builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddHttpContextAccessor();
 
 // 3. Add controller services
 builder.Services.AddControllers();
