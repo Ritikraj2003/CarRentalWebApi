@@ -1,0 +1,35 @@
+﻿using CarRentalApi.DbContext;
+using CarRentalApi.Interface;
+using CarRentalApi.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CarRentalApi.Repository
+{
+    public class ContactRepository:IContactRepository
+    {
+        private readonly AppDbContext dbContext;
+
+        public ContactRepository(AppDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
+        public  async  Task<Contact> CreateAsync(Contact contact)
+        {
+             contact.Id = Guid.NewGuid();
+            dbContext.Contacts.Add(contact);
+            await dbContext.SaveChangesAsync();
+            return contact;
+        }
+
+        public async Task<IEnumerable<Contact>> GetAllAsync()
+        {
+            return await dbContext.Contacts.ToListAsync();
+        }
+
+        public async Task<Contact?> GetByIdAsync(Guid id)
+        {
+            return await dbContext.Contacts.FirstOrDefaultAsync(c => c.Id == id);
+        }
+    }
+}
