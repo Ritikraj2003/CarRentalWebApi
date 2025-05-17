@@ -23,7 +23,7 @@ namespace CarRentalApi.Controllers
             var res= await contactRepository.GetAllAsync();
             return Ok(res);
         }
-        [HttpGet]
+        [HttpGet ("{id}")]
         public async Task<IActionResult> GetContact(Guid id)
         {
             var res = await contactRepository.GetByIdAsync(id);
@@ -31,10 +31,11 @@ namespace CarRentalApi.Controllers
         }
 
         [HttpPost]
-       public async Task<IActionResult> CreateContact([FromForm]  Contact contact)
+       public async Task<IActionResult> CreateContact( Contact contact)
         {
              var res = await contactRepository.CreateAsync(contact);
-            return Ok(res);
+
+            return CreatedAtAction(nameof(GetContact), new { id = res.Id }, res);
         }
     }
 }

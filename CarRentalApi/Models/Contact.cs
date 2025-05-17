@@ -5,7 +5,7 @@ namespace CarRentalApi.Models
 {
     public class Contact
     {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public string First { get; set; }
         public string LastName {  get; set; }
         public string Email { get; set; }
@@ -15,7 +15,6 @@ namespace CarRentalApi.Models
 
     public class Address
     {
-        public Guid Id { get; set; }
         public string Location { get; set; }
         public string City { get; set; }
         public string Region { get; set; }
@@ -23,8 +22,7 @@ namespace CarRentalApi.Models
         public string Country { get; set; }
 
 
-        public Guid ContactId { get; set; }
-        public Contact Contact { get; set; }
+        
 
 
     }

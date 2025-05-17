@@ -9,9 +9,20 @@
 
         public DbSet<Car> Cars { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        public DbSet<BookingType> BookingTypes {  get; set; }
+        public DbSet<BookingType> BookingTypes { get; set; }
         public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Address> Addresses { get; set; }
-    }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+          
+            modelBuilder.Entity<Contact>().OwnsMany(c => c.Addresses, a =>
+            {
+                a.WithOwner().HasForeignKey("ContactId"); 
+                a.Property<int>("Id");                    
+                a.HasKey("Id");                           
+            });
+
+            base.OnModelCreating(modelBuilder);
+        }
+    }
 }

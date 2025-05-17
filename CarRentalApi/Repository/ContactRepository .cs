@@ -16,7 +16,7 @@ namespace CarRentalApi.Repository
 
         public  async  Task<Contact> CreateAsync(Contact contact)
         {
-             contact.Id = Guid.NewGuid();
+            // contact.Id = Guid.NewGuid();
             dbContext.Contacts.Add(contact);
             await dbContext.SaveChangesAsync();
             return contact;
