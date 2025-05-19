@@ -43,5 +43,15 @@ namespace CarRentalApi.Controllers
             var res = await ibookingTypeRepository.DeleteByBookingTypeId(id);
             return Ok(res);
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBookingType( [FromBody] BookingType bookingType)
+        {
+            if ( bookingType.BookingTypeId == null)
+            {
+                return BadRequest("BookingType ID Not found");
+            }
+            var res = await ibookingTypeRepository.UpdateBookingTypeAsync(bookingType);
+            return Ok(res);
+        }
     }
 }

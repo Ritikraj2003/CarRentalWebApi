@@ -30,8 +30,6 @@ namespace CarRentalApi.Repository
             await DbContext.SaveChangesAsync();
             return c;
 
-
-
         }
 
         public async Task<IEnumerable<BookingType>> GetAllBookingTypeAsync()
@@ -41,10 +39,25 @@ namespace CarRentalApi.Repository
 
         public async Task<BookingType> GetByBookingTypeId(Guid id)
         {
-
              return await DbContext.BookingTypes.FirstOrDefaultAsync(c => c.BookingTypeId == id);
+        }
+        public async Task<BookingType> UpdateBookingTypeAsync(BookingType bookingType)
+        {
+            var existingBooking = await GetByBookingTypeId(bookingType.BookingTypeId);
+            // Find the existing booking in the database
+           
+            if (existingBooking == null)
+            {
+                throw new InvalidOperationException("Booking not found");
+            }
 
+            // Update the properties
+            DbContext.Entry(existingBooking).CurrentValues.SetValues(bookingType);
 
+            // Save the changes to the database
+            await DbContext.SaveChangesAsync();
+
+            return existingBooking;
         }
     }
 }

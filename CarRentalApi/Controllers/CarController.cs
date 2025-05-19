@@ -26,12 +26,12 @@ namespace CarRentalApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] Car car, IFormFile imageFile)
+        public async Task<IActionResult> Post([FromForm] Car car)
         {
             if (car == null)
                 return BadRequest();
 
-            var result = await _carRepository.AddCarAsync(car, imageFile);
+            var result = await _carRepository.AddCarAsync(car);
             return CreatedAtAction(nameof(Get), new { id = result.CarId }, result);
         }
 
@@ -47,6 +47,20 @@ namespace CarRentalApi.Controllers
         {
             var car= await _carRepository.DeleteByCarId(id);
             return Ok(car);
+        }
+
+        [HttpPut ("{id}")]
+        public async Task<IActionResult> UpdateByCarId( Guid id , Car car)
+        {
+            var existingCar = await _carRepository.GetByCarId(id);
+
+            if(existingCar!= null)
+            {
+                car.CarId = existingCar.CarId;
+                var res = await _carRepository.UpdateCarAsync(car);
+                return Ok(res);
+            }
+            return BadRequest("Not Found");
         }
     }
 

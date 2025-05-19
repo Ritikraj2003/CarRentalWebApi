@@ -52,6 +52,18 @@ namespace CarRentalApi.Controllers
             var res = await ibookingRepository.DeleteByIdAsyncAsync(id);
             return Ok(res);
         }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBooking( [FromBody] Booking booking)
+        {
+            if (booking.BookingId == null)
+            {
+                return BadRequest("Booking ID mismatch");
+            }
+            var updatedBooking = await ibookingRepository.UpdateBookingAsync(booking);
+            return Ok(updatedBooking);
+        }
     }
 }
 

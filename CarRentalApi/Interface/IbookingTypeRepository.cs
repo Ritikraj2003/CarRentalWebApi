@@ -9,5 +9,6 @@ namespace CarRentalApi.Interface
 
         Task<BookingType> GetByBookingTypeId(Guid id);
         Task<BookingType> DeleteByBookingTypeId(Guid id);
+        Task<BookingType> UpdateBookingTypeAsync(BookingType bookingType);
     }
 }

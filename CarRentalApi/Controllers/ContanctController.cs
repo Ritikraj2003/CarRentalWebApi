@@ -50,5 +50,20 @@ namespace CarRentalApi.Controllers
             return Ok(deletedContact); 
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateContact(Guid id, Contact contact)
+        {
+            if ( contact.Id == null)
+            {
+                return BadRequest("Contact ID Not found");
+            }
+            var updatedContact = await contactRepository.UpdateAsync(contact);
+            if (updatedContact == null)
+            {
+                return NotFound();
+            }
+            return Ok(updatedContact);
+        }
+
     }
 }

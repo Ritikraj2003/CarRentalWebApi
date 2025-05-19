@@ -39,5 +39,22 @@ namespace CarRentalApi.Repository
         {
             return await dbContext.Contacts.FirstOrDefaultAsync(c => c.Id == id);
         }
+
+        public async Task<Contact> UpdateAsync(Contact contact)
+        {
+            var existingContact = dbContext.Contacts.FirstOrDefault(c => c.Id == contact.Id);
+            if (existingContact == null)
+            {
+                throw new InvalidOperationException("Booking not found");
+            }
+
+            // Update the properties
+            dbContext.Entry(existingContact).CurrentValues.SetValues(contact);
+
+            // Save the changes to the database
+            await dbContext.SaveChangesAsync();
+
+            return existingContact;
+        }
     }
 }
