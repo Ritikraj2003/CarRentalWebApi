@@ -22,6 +22,14 @@ namespace CarRentalApi.Repository
             return contact;
         }
 
+        public async Task<Contact> DeleteAsync(Guid id)
+        {
+             var c = await GetByIdAsync(id);
+             dbContext.Contacts.Remove(c);
+             await dbContext.SaveChangesAsync();
+            return c;
+        }
+
         public async Task<IEnumerable<Contact>> GetAllAsync()
         {
             return await dbContext.Contacts.ToListAsync();

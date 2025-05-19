@@ -10,23 +10,23 @@ namespace CarRentalApi.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        
+
         private readonly IBookingRepository ibookingRepository;
 
         public BookingController(IBookingRepository IbookingRepository)
         {
-           
+
             ibookingRepository = IbookingRepository;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBooking( [FromForm] Booking booking)
+        public async Task<IActionResult> CreateBooking([FromForm] Booking booking)
         {
             if (booking == null)
             {
                 return BadRequest();
             }
-             var res = await ibookingRepository.AddBookingAsync(booking);
+            var res = await ibookingRepository.AddBookingAsync(booking);
             return Ok(res);
 
         }
@@ -36,6 +36,21 @@ namespace CarRentalApi.Controllers
         {
             var cars = await ibookingRepository.GetAllBookingAsync();
             return Ok(cars);
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult>GetById(Guid id)
+        {
+            var res = await ibookingRepository.GetByIdAsync(id);
+            return Ok(res);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteById(Guid id)
+        {
+            var res = await ibookingRepository.DeleteByIdAsyncAsync(id);
+            return Ok(res);
         }
     }
 }

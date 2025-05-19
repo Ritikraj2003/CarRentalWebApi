@@ -5,6 +5,7 @@
     using CarRentalApi.Models;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.HttpResults;
     using Microsoft.EntityFrameworkCore;
 
     public class CarRepository : ICarRepository
@@ -77,6 +78,19 @@
             return $"{baseUrl}/Uploads/{uniqueFileName}";
         }
 
+        public  async Task<Car> GetByCarId(Guid id)
+        {
+             var c = await _context.Cars.FirstOrDefaultAsync(c => c.CarId == id);
+            return c;
+        }
+
+        public async Task<Car> DeleteByCarId(Guid id)
+        {
+             var c = await GetByCarId(id);
+              _context.Cars.Remove(c);  
+            await _context.SaveChangesAsync();
+            return c;
+        }
     }
 
 }

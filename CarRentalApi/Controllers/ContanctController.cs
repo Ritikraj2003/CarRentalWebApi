@@ -37,5 +37,18 @@ namespace CarRentalApi.Controllers
 
             return CreatedAtAction(nameof(GetContact), new { id = res.Id }, res);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteById(Guid id)
+        {
+            var deletedContact = await contactRepository.DeleteAsync(id);
+            if (deletedContact == null)
+            {
+                return NotFound(); 
+            }
+
+            return Ok(deletedContact); 
+        }
+
     }
 }

@@ -29,5 +29,19 @@ namespace CarRentalApi.Controllers
              var res = await ibookingTypeRepository.AddBookingTypeAsync(bookingType);
             return Ok(res);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByBookingTypeId(Guid id)
+        {
+            var res = await ibookingTypeRepository.GetByBookingTypeId(id);
+            return Ok(res);
+        }
+
+        [HttpDelete ("{id}")]
+        public async Task<IActionResult>DeleteBYBookingTypeId(Guid id)
+        {
+            var res = await ibookingTypeRepository.DeleteByBookingTypeId(id);
+            return Ok(res);
+        }
     }
 }

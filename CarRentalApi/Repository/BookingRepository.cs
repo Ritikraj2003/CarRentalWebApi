@@ -22,9 +22,23 @@ namespace CarRentalApi.Repository
             return booking;
         }
 
+        public async Task<Booking> DeleteByIdAsyncAsync(Guid id)
+        {
+            var c= await dbContext.Bookings.FindAsync(id);
+
+            dbContext.Bookings.Remove(c);
+            await dbContext.SaveChangesAsync();
+            return c;
+        }
+
         public async Task<IEnumerable<Booking>> GetAllBookingAsync()
         {
             return await dbContext.Bookings.ToListAsync();
+        }
+
+        public async Task<Booking> GetByIdAsync(Guid id)
+        {
+            return await dbContext.Bookings.FirstOrDefaultAsync(c => c.BookingId == id);
         }
     }
 }

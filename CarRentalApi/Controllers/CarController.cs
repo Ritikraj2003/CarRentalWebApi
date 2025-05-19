@@ -34,6 +34,20 @@ namespace CarRentalApi.Controllers
             var result = await _carRepository.AddCarAsync(car, imageFile);
             return CreatedAtAction(nameof(Get), new { id = result.CarId }, result);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult>GetByCarId(Guid id)
+        {
+            var car = await _carRepository.GetByCarId(id); 
+            return Ok(car); 
+        }
+
+        [HttpDelete ("{id}")]
+        public async Task<IActionResult>DeleteById(Guid id)
+        {
+            var car= await _carRepository.DeleteByCarId(id);
+            return Ok(car);
+        }
     }
 
 }

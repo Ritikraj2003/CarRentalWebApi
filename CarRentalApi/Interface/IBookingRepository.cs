@@ -6,5 +6,8 @@ namespace CarRentalApi.Interface
     {
         Task<Booking> AddBookingAsync(Booking booking);
         Task<IEnumerable<Booking>> GetAllBookingAsync();
+        Task<Booking> GetByIdAsync( Guid id);
+        Task<Booking>DeleteByIdAsyncAsync(Guid id);
+
     }
 }

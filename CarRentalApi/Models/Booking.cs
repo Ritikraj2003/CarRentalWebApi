@@ -2,7 +2,7 @@
 {
     public class Booking
     {
-        public Guid BookingId { get; set; } = Guid.NewGuid();
+        public Guid? BookingId { get; set; } 
 
         public string cartype { get; set; }
         public string BookingType { get; set; }
