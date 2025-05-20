@@ -8,6 +8,7 @@ namespace CarRentalApi.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CarController : ControllerBase
@@ -25,7 +26,7 @@ namespace CarRentalApi.Controllers
             var cars = await _carRepository.GetAllCarsAsync();
             return Ok(cars);
         }
-        [Authorize]
+        
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] Car car)
         {
@@ -35,21 +36,21 @@ namespace CarRentalApi.Controllers
             var result = await _carRepository.AddCarAsync(car);
             return CreatedAtAction(nameof(Get), new { id = result.CarId }, result);
         }
-        [Authorize]
+        
         [HttpGet("{id}")]
         public async Task<IActionResult>GetByCarId(Guid id)
         {
             var car = await _carRepository.GetByCarId(id); 
             return Ok(car); 
         }
-        [Authorize]
+        
         [HttpDelete ("{id}")]
         public async Task<IActionResult>DeleteById(Guid id)
         {
             var car= await _carRepository.DeleteByCarId(id);
             return Ok(car);
         }
-        [Authorize]
+       
         [HttpPut ("{id}")]
         public async Task<IActionResult> UpdateByCarId( Guid id , Car car)
         {

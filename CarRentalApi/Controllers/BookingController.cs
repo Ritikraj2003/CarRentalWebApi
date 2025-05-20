@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookingController : ControllerBase
@@ -32,11 +33,6 @@ namespace CarRentalApi.Controllers
             var res = await ibookingRepository.AddBookingAsync(booking);
 
             string subject = "New Booking Created";
-            //string body = $"A new booking has been made by {booking.Name}.\n\n" +
-            //              $"Details:\nBookingId: {booking.BookingId}\nName: {booking.Name}\nEmail: {booking.Email}\nPhone: {booking.Phone_no}\n" +
-            //              $"CarType: {booking.cartype}\nBookingType: {booking.BookingType}\n" +
-            //              $"PickupLocation: {booking.PickupLocation}\nPickupDate: {booking.PickupDate}\nPickupTime: {booking.PickupTime}\n"+
-            //              $"DropLocation: {booking.DropLocation} \nDropDate: {booking.Dropdate} \n DropTime: {booking.Droptime}";
             string body = $@"
      <html>
     <body>
@@ -72,14 +68,14 @@ namespace CarRentalApi.Controllers
             return Ok(cars);
         }
 
-        [Authorize]
+        
         [HttpGet("{id}")]
         public async Task<IActionResult>GetById(Guid id)
         {
             var res = await ibookingRepository.GetByIdAsync(id);
             return Ok(res);
         }
-        [Authorize]
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteById(Guid id)
         {
@@ -87,7 +83,7 @@ namespace CarRentalApi.Controllers
             return Ok(res);
         }
 
-        [Authorize]
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBooking( [FromBody] Booking booking)
         {

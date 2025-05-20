@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ContanctController : ControllerBase
@@ -17,14 +18,14 @@ namespace CarRentalApi.Controllers
         {
             this.contactRepository = contactRepository;
         }
-        [Authorize]
+        
         [HttpGet]
         public async Task<IActionResult> GetAllContact()
         {
             var res= await contactRepository.GetAllAsync();
             return Ok(res);
         }
-        [Authorize]
+       
         [HttpGet ("{id}")]
         public async Task<IActionResult> GetContact(Guid id)
         {
@@ -39,7 +40,7 @@ namespace CarRentalApi.Controllers
 
             return CreatedAtAction(nameof(GetContact), new { id = res.Id }, res);
         }
-        [Authorize]
+       
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteById(Guid id)
         {
@@ -51,7 +52,7 @@ namespace CarRentalApi.Controllers
 
             return Ok(deletedContact); 
         }
-        [Authorize]
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateContact(Guid id, Contact contact)
         {
