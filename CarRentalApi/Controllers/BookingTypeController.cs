@@ -1,5 +1,6 @@
 ﻿using CarRentalApi.Interface;
 using CarRentalApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,27 +23,28 @@ namespace CarRentalApi.Controllers
             var res = await ibookingTypeRepository.GetAllBookingTypeAsync();
             return Ok(res);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateBookingType([FromForm] BookingType bookingType)
         {
              var res = await ibookingTypeRepository.AddBookingTypeAsync(bookingType);
             return Ok(res);
         }
-
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByBookingTypeId(Guid id)
         {
             var res = await ibookingTypeRepository.GetByBookingTypeId(id);
             return Ok(res);
         }
-
+        [Authorize]
         [HttpDelete ("{id}")]
         public async Task<IActionResult>DeleteBYBookingTypeId(Guid id)
         {
             var res = await ibookingTypeRepository.DeleteByBookingTypeId(id);
             return Ok(res);
         }
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBookingType( [FromBody] BookingType bookingType)
         {

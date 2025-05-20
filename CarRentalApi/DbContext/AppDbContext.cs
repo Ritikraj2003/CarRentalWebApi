@@ -11,6 +11,7 @@
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<BookingType> BookingTypes { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<User> Users { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
