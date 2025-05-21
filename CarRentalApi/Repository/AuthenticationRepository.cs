@@ -39,5 +39,10 @@ namespace CarRentalApi.Repository
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

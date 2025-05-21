@@ -2,11 +2,11 @@
 using System.Text;
 using CarRentalApi.Interface;
 using CarRentalApi.Models;
-using CarRentalApi.Repository;
 using CarRentalApi.TokenGenrator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using CarRentalApi.Repository;
 
 namespace CarRentalApi.Controllers
 {
@@ -50,13 +50,13 @@ namespace CarRentalApi.Controllers
         }
 
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] string username)
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            var user = await authentication.GetUserByUsername(username);
+            var user = await authentication.GetUserByEmail(request.Email);
             if (user == null || string.IsNullOrEmpty(user.Email))
                 return NotFound("User not found or email not set.");
 
-            var resetToken = tokenService.GenerateToken(user.UserName);
+            var resetToken = tokenService.GenerateToken(user.UserName); // Username goes into token claims
             user.ResetToken = resetToken;
             user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(5);
             await authentication.UpdateUser(user);
@@ -69,7 +69,7 @@ namespace CarRentalApi.Controllers
             return Ok("Password reset link sent to your email.");
         }
 
-        // GET - render password reset HTML form
+        // GET - HTML Reset Form
         [HttpGet("reset-password")]
         public IActionResult ResetPasswordForm([FromQuery] string token)
         {
@@ -89,7 +89,7 @@ namespace CarRentalApi.Controllers
             ", "text/html");
         }
 
-        // POST - handle password reset submission
+        // POST - Reset Password
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromForm] string token, [FromForm] string newPassword)
         {
@@ -113,4 +113,6 @@ namespace CarRentalApi.Controllers
             return Content("<h3>Password has been reset successfully.</h3>", "text/html");
         }
     }
+
+  
 }

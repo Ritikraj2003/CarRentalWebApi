@@ -10,5 +10,8 @@ namespace CarRentalApi.Interface
         Task<User?> GetUserByUsername(string username);
         Task UpdateUser(User user);
 
+        Task<User> GetUserByEmail(string email);
+
+
     }
 }
