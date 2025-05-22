@@ -22,7 +22,7 @@ namespace CarRentalApi.Controllers
             ibookingRepository = IbookingRepository;
             this.emailService = emailService;
         }
-       
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromForm] Booking booking)
         {
@@ -30,28 +30,40 @@ namespace CarRentalApi.Controllers
             {
                 return BadRequest();
             }
+
             var res = await ibookingRepository.AddBookingAsync(booking);
 
             string subject = "New Booking Created";
             string body = $@"
-     <html>
+    <html>
     <body>
-        <p>A new booking has been made by <strong>{booking.Name}</strong>.</p>
-        <p><strong>Details:</strong><br/>
-        BookingId: {booking.BookingId}<br/>
-        Name: {booking.Name}<br/>
-        Email: {booking.Email}<br/>
-        Phone: {booking.Phone_no}<br/>
-        CarType: {booking.cartype}<br/>
-        BookingType: {booking.BookingType}<br/>
-        PickupLocation: {booking.PickupLocation}<br/>
-        PickupDate: {booking.PickupDate}<br/>
-        PickupTime: {booking.PickupTime}<br/>
-        DropLocation: {booking.DropLocation}<br/>
-        DropDate: {booking.Dropdate}<br/>
-        DropTime: {booking.Droptime}</p>
+           <h2>Dear Team<h2>
+        <p> Please find the booking request details below.
+             request you to please confirm the below booking ans share the cab & Driver Details at the earlist.<p>
+        <table border='1' cellpadding='8' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
+            <thead>
+                <tr style='background-color: #f2f2f2;'>
+                    <th>Field</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>BookingId</td><td>{booking.BookingId}</td></tr>
+                <tr><td>Name</td><td>{booking.Name}</td></tr>
+                <tr><td>Email</td><td>{booking.Email}</td></tr>
+                <tr><td>Phone</td><td>{booking.Phone_no}</td></tr>
+                <tr><td>Car Type</td><td>{booking.cartype}</td></tr>
+                <tr><td>Booking Type</td><td>{booking.BookingType}</td></tr>
+                <tr><td>Pickup Location</td><td>{booking.PickupLocation}</td></tr>
+                <tr><td>Pickup Date</td><td>{booking.PickupDate}</td></tr>
+                <tr><td>Pickup Time</td><td>{booking.PickupTime}</td></tr>
+                <tr><td>Drop Location</td><td>{booking.DropLocation}</td></tr>
+                <tr><td>Drop Date</td><td>{booking.Dropdate}</td></tr>
+                <tr><td>Drop Time</td><td>{booking.Droptime}</td></tr>
+            </tbody>
+        </table>
 
-        <p style='color: yellow; background-color: black; font-weight: bold; padding: 10px;'>
+        <p style='color: yellow; background-color: black; font-weight: bold; padding: 10px; margin-top: 20px;'>
             Auto generated email
         </p>
     </body>
@@ -60,7 +72,8 @@ namespace CarRentalApi.Controllers
             await emailService.SendEmailAsync("ritikraj1092002@gmail.com", subject, body, isHtml: true);
             return Ok(res);
         }
-         
+
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
