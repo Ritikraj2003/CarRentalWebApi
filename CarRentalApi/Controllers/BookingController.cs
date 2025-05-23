@@ -22,7 +22,7 @@ namespace CarRentalApi.Controllers
             ibookingRepository = IbookingRepository;
             this.emailService = emailService;
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromForm] Booking booking)
         {
@@ -36,7 +36,7 @@ namespace CarRentalApi.Controllers
             string subject = "New Booking Created";
             string body = $@"
     <html>
-    <body>
+    <body> 
            <h2>Dear Team<h2>
         <p> Please find the booking request details below.
              request you to please confirm the below booking ans share the cab & Driver Details at the earlist.<p>
@@ -70,6 +70,32 @@ namespace CarRentalApi.Controllers
     </html>";
 
             await emailService.SendEmailAsync("ritikraj1092002@gmail.com", subject, body, isHtml: true);
+
+            string Body = $@"
+<html>
+<body>
+    <h2>Dear {booking.Name},</h2>
+    <p>Your booking has been successfully received.</p>
+    <p><strong>Booking ID:</strong> {booking.BookingId}</p>
+    <p>Please wait for a confirmation email with driver details.</p>
+    <p>Thank you for choosing our service.</p>
+
+    <p style='color: yellow; background-color: black; font-weight: bold; padding: 10px; margin-top: 20px;'>
+        Auto generated email
+    </p>
+
+    <br/>
+    <p>Best regards,</p>
+    <p><strong>Car Rental Team</strong><br/>
+    contact@yourcompany.com<br/>
+    +91-9876543210</p>
+</body>
+</html>";
+
+
+
+            await emailService.SendEmailAsync(booking.Email, "Car Booking Acknowledgement", Body, isHtml: true);
+
             return Ok(res);
         }
 

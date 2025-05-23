@@ -19,14 +19,14 @@ namespace CarRentalApi.Controllers
         {
             _carRepository = carRepository;
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var cars = await _carRepository.GetAllCarsAsync();
             return Ok(cars);
         }
-        
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] Car car)
         {

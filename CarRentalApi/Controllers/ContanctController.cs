@@ -32,7 +32,7 @@ namespace CarRentalApi.Controllers
             var res = await contactRepository.GetByIdAsync(id);
             return Ok(res);
         }
-
+        [AllowAnonymous]
         [HttpPost]
        public async Task<IActionResult> CreateContact( Contact contact)
         {

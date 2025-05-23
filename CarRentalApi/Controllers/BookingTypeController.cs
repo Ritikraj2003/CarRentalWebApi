@@ -17,7 +17,7 @@ namespace CarRentalApi.Controllers
         {
             this.ibookingTypeRepository = ibookingTypeRepository;
         }
-
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetBookingType()
         {
@@ -47,8 +47,9 @@ namespace CarRentalApi.Controllers
         }
        
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBookingType( [FromBody] BookingType bookingType)
+        public async Task<IActionResult> UpdateBookingType( Guid id ,[FromBody] BookingType bookingType)
         {
+             bookingType.BookingTypeId=id;
             if ( bookingType.BookingTypeId == null)
             {
                 return BadRequest("BookingType ID Not found");
