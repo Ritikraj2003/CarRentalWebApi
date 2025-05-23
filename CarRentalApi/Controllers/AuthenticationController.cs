@@ -6,7 +6,7 @@ using CarRentalApi.TokenGenrator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using CarRentalApi.Repository;
+using CarRentalApi.GmailService;
 
 namespace CarRentalApi.Controllers
 {

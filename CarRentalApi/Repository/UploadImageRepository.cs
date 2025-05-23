@@ -3,7 +3,7 @@
     public class UploadImageRepository
     {
 
-        public static async Task<string> UploadImageAsync(Guid baseFileName, IFormFile file, string subDirectory)
+        public static async Task<string> UploadImageAsync(int baseFileName, IFormFile file, string subDirectory)
         {
             if (file == null || file.Length == 0)
                 return null;

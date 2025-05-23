@@ -1,13 +1,13 @@
-﻿using CarRentalApi.Interface;
+﻿using CarRentalApi.GmailService;
+using CarRentalApi.Interface;
 using CarRentalApi.Models;
-using CarRentalApi.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class BookingController : ControllerBase
@@ -15,14 +15,16 @@ namespace CarRentalApi.Controllers
 
         private readonly IBookingRepository ibookingRepository;
         private readonly EmailService emailService;
+        private readonly GmailBody gmailBody;
 
-        public BookingController(IBookingRepository IbookingRepository,EmailService emailService)
+        public BookingController(IBookingRepository IbookingRepository,EmailService emailService,GmailBody gmailBody)
         {
 
             ibookingRepository = IbookingRepository;
             this.emailService = emailService;
+            this.gmailBody = gmailBody;
         }
-        [AllowAnonymous]
+       
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromForm] Booking booking)
         {
@@ -34,68 +36,14 @@ namespace CarRentalApi.Controllers
             var res = await ibookingRepository.AddBookingAsync(booking);
 
             string subject = "New Booking Created";
-            string body = $@"
-    <html>
-    <body> 
-           <h2>Dear Team<h2>
-        <p> Please find the booking request details below.
-             request you to please confirm the below booking ans share the cab & Driver Details at the earlist.<p>
-        <table border='1' cellpadding='8' cellspacing='0' style='border-collapse: collapse; width: 100%;'>
-            <thead>
-                <tr style='background-color: #f2f2f2;'>
-                    <th>Field</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>BookingId</td><td>{booking.BookingId}</td></tr>
-                <tr><td>Name</td><td>{booking.Name}</td></tr>
-                <tr><td>Email</td><td>{booking.Email}</td></tr>
-                <tr><td>Phone</td><td>{booking.Phone_no}</td></tr>
-                <tr><td>Car Type</td><td>{booking.cartype}</td></tr>
-                <tr><td>Booking Type</td><td>{booking.BookingType}</td></tr>
-                <tr><td>Pickup Location</td><td>{booking.PickupLocation}</td></tr>
-                <tr><td>Pickup Date</td><td>{booking.PickupDate}</td></tr>
-                <tr><td>Pickup Time</td><td>{booking.PickupTime}</td></tr>
-                <tr><td>Drop Location</td><td>{booking.DropLocation}</td></tr>
-                <tr><td>Drop Date</td><td>{booking.Dropdate}</td></tr>
-                <tr><td>Drop Time</td><td>{booking.Droptime}</td></tr>
-            </tbody>
-        </table>
-
-        <p style='color: yellow; background-color: black; font-weight: bold; padding: 10px; margin-top: 20px;'>
-            Auto generated email
-        </p>
-    </body>
-    </html>";
-
+           
+            var body= await gmailBody.SendEmail(booking);
             await emailService.SendEmailAsync("ritikraj1092002@gmail.com", subject, body, isHtml: true);
 
-            string Body = $@"
-<html>
-<body>
-    <h2>Dear {booking.Name},</h2>
-    <p>Your booking has been successfully received.</p>
-    <p><strong>Booking ID:</strong> {booking.BookingId}</p>
-    <p>Please wait for a confirmation email with driver details.</p>
-    <p>Thank you for choosing our service.</p>
-
-    <p style='color: yellow; background-color: black; font-weight: bold; padding: 10px; margin-top: 20px;'>
-        Auto generated email
-    </p>
-
-    <br/>
-    <p>Best regards,</p>
-    <p><strong>Car Rental Team</strong><br/>
-    contact@yourcompany.com<br/>
-    +91-9876543210</p>
-</body>
-</html>";
-
-
-
-            await emailService.SendEmailAsync(booking.Email, "Car Booking Acknowledgement", Body, isHtml: true);
-
+            // Send email to the user
+            var Body= await gmailBody.SendEmailToUser(booking);
+            subject = "Booking Confirmation";
+            await emailService.SendEmailAsync(booking.Email, subject, Body, isHtml: true);
             return Ok(res);
         }
 
@@ -109,14 +57,14 @@ namespace CarRentalApi.Controllers
 
         
         [HttpGet("{id}")]
-        public async Task<IActionResult>GetById(Guid id)
+        public async Task<IActionResult>GetById(int id)
         {
             var res = await ibookingRepository.GetByIdAsync(id);
             return Ok(res);
         }
         
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteById(Guid id)
+        public async Task<IActionResult> DeleteById(int id)
         {
             var res = await ibookingRepository.DeleteByIdAsyncAsync(id);
             return Ok(res);
@@ -124,11 +72,11 @@ namespace CarRentalApi.Controllers
 
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking( [FromBody] Booking booking)
+        public async Task<IActionResult> UpdateBooking( int id,[FromBody] Booking booking)
         {
             if (booking.BookingId == null)
             {
-                return BadRequest("Booking ID mismatch");
+                booking.BookingId = id;
             }
             var updatedBooking = await ibookingRepository.UpdateBookingAsync(booking);
             return Ok(updatedBooking);

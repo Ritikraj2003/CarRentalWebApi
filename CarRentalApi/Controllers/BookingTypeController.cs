@@ -33,21 +33,21 @@ namespace CarRentalApi.Controllers
         }
         
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByBookingTypeId(Guid id)
+        public async Task<IActionResult> GetByBookingTypeId(int id)
         {
             var res = await ibookingTypeRepository.GetByBookingTypeId(id);
             return Ok(res);
         }
        
         [HttpDelete ("{id}")]
-        public async Task<IActionResult>DeleteBYBookingTypeId(Guid id)
+        public async Task<IActionResult>DeleteBYBookingTypeId(int id)
         {
             var res = await ibookingTypeRepository.DeleteByBookingTypeId(id);
             return Ok(res);
         }
        
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBookingType( Guid id ,[FromBody] BookingType bookingType)
+        public async Task<IActionResult> UpdateBookingType( int id ,[FromBody] BookingType bookingType)
         {
              bookingType.BookingTypeId=id;
             if ( bookingType.BookingTypeId == null)

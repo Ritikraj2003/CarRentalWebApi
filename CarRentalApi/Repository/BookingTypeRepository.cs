@@ -16,13 +16,13 @@ namespace CarRentalApi.Repository
 
         public async Task<BookingType> AddBookingTypeAsync(BookingType bookingType)
         {
-             bookingType.BookingTypeId = Guid.NewGuid();
+            // bookingType.BookingTypeId = Guid.NewGuid();
             DbContext.BookingTypes.Add(bookingType);
             await DbContext.SaveChangesAsync();
             return bookingType;
         }
 
-        public async Task<BookingType> DeleteByBookingTypeId(Guid id)
+        public async Task<BookingType> DeleteByBookingTypeId(int id)
         {
             var c =  await GetByBookingTypeId(id);
 
@@ -37,7 +37,7 @@ namespace CarRentalApi.Repository
              return await  DbContext.BookingTypes.ToListAsync();
         }
 
-        public async Task<BookingType> GetByBookingTypeId(Guid id)
+        public async Task<BookingType> GetByBookingTypeId(int id)
         {
              return await DbContext.BookingTypes.FirstOrDefaultAsync(c => c.BookingTypeId == id);
         }

@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarRentalApi.Models
 {
     public class Car
     {
-        public Guid? CarId { get; set; } 
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CarId { get; set; } 
         public string CarName { get; set; }
         public string CarModel { get; set; }
         public string? ImagePath { get; set; }

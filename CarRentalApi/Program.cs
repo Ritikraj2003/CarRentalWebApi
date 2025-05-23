@@ -1,4 +1,5 @@
 ﻿using CarRentalApi.DbContext;
+using CarRentalApi.GmailService;
 using CarRentalApi.Interface;
 using CarRentalApi.Models;
 using CarRentalApi.Repository;
@@ -86,6 +87,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddSingleton<GmailBody>();
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 // 2. Register your repositories/services
@@ -94,6 +96,7 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IbookingTypeRepository, BookingTypeRepository>();
 builder.Services.AddScoped<IAuthentication, AuthenticationRepository>();
+builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 builder.Services.AddSingleton<TokenService>();
 
 

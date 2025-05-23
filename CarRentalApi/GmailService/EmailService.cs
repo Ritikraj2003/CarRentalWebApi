@@ -1,4 +1,4 @@
-﻿namespace CarRentalApi.Repository;
+﻿namespace CarRentalApi.GmailService;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.Extensions.Options;

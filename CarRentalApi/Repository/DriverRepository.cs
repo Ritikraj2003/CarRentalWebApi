@@ -39,7 +39,7 @@ namespace CarRentalApi.Repository
 
         }
 
-        public async Task<ServiceResponse<bool>> DeleteDriverAsync(Guid id)
+        public async Task<ServiceResponse<bool>> DeleteDriverAsync(int id)
         {
             var response = new ServiceResponse<bool>();
 
@@ -93,7 +93,7 @@ namespace CarRentalApi.Repository
             return response;
         }
 
-        public async Task<ServiceResponse<Driver>> GetDriverByIdAsync(Guid id)
+        public async Task<ServiceResponse<Driver>> GetDriverByIdAsync(int id)
         {
             var response = new ServiceResponse<Driver>();
 
@@ -122,13 +122,13 @@ namespace CarRentalApi.Repository
         }
 
 
-        public async Task<ServiceResponse<Driver>> UpdateDriverAsync(Driver driver)
+        public async Task<ServiceResponse<Driver>> UpdateDriverAsync(int id, Driver driver)
         {
             var response = new ServiceResponse<Driver>();
 
             try
             {
-                var existingDriver = await appDbContext.Drivers.FindAsync(driver.DriverID);
+                var existingDriver = await appDbContext.Drivers.FindAsync(id);
 
                 if (existingDriver == null)
                 {

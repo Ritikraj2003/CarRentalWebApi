@@ -1,4 +1,5 @@
-﻿using CarRentalApi.DbContext;
+﻿using Azure.Core;
+using CarRentalApi.DbContext;
 using CarRentalApi.Interface;
 using CarRentalApi.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -6,66 +7,135 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalApi.Repository
 {
-    public class BookingRepository: IBookingRepository
+    public class BookingRepository : IBookingRepository
     {
         private readonly AppDbContext dbContext;
-
         public BookingRepository(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public async Task<Booking> AddBookingAsync(Booking booking)
+        public async Task<ServiceResponse<Booking>> AddBookingAsync(Booking booking)
         {
-            booking.BookingId = Guid.NewGuid();
-            dbContext.Bookings.Add(booking);
-            await dbContext.SaveChangesAsync();
-            return booking;
-        }
-
-        public async Task<Booking> DeleteByIdAsyncAsync(Guid id)
-        {
-            var c= await dbContext.Bookings.FindAsync(id);
-
-            dbContext.Bookings.Remove(c);
-            await dbContext.SaveChangesAsync();
-            return c;
-        }
-
-        public async Task<IEnumerable<Booking>> GetAllBookingAsync()
-        {
-            return await dbContext.Bookings.ToListAsync();
-        }
-
-        public async Task<Booking> GetByIdAsync(Guid id)
-        {
-            return await dbContext.Bookings.FirstOrDefaultAsync(c => c.BookingId == id);
-        }
-
-        public async Task<Booking> UpdateBookingAsync(Booking booking)
-        {
-            if (booking == null)
+            var response = new ServiceResponse<Booking>();
+            try
             {
-                throw new InvalidOperationException("Update failed: Booking is null");
+                dbContext.Bookings.Add(booking);
+                await dbContext.SaveChangesAsync();
+                response.Data = booking;
+                response.Success = true;
+                response.Message = "Booking added successfully.";
             }
 
-            // Find the existing booking in the database
-            var existingBooking = await dbContext.Bookings
-                .FirstOrDefaultAsync(b => b.BookingId == booking.BookingId);
-
-            if (existingBooking == null)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Booking not found");
+                response.Success = false;
+                response.Message = ex.Message;
             }
-
-            // Update the properties
-            dbContext.Entry(existingBooking).CurrentValues.SetValues(booking);
-
-            // Save the changes to the database
-            await dbContext.SaveChangesAsync();
-
-            return existingBooking;
+            return response;
+        }
+        public async Task<ServiceResponse<bool>> DeleteByIdAsyncAsync(int id)
+        {
+            var response = new ServiceResponse<bool>();
+            try
+            {
+                var booking = await dbContext.Bookings.FindAsync(id);
+                if (booking == null)
+                {
+                    response.Success = false;
+                    response.Message = "Booking not found.";
+                }
+                else
+                {
+                    dbContext.Bookings.Remove(booking);
+                    await dbContext.SaveChangesAsync();
+                    response.Success = true;
+                    response.Message = "Booking deleted successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
         }
 
+        public async Task<ServiceResponse<List<Booking>>> GetAllBookingAsync()
+        {
+            var response = new ServiceResponse<List<Booking>>();
+            try
+            {
+                var bookings = dbContext.Bookings.ToList();
+                response.Data = bookings;
+                response.Success = true;
+                response.Message = "Bookings retrieved successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse<Booking>> GetByIdAsync(int id)
+        {
+            var response = new ServiceResponse<Booking>();
+            try
+            {
+                var booking = dbContext.Bookings.FirstOrDefault(c => c.BookingId == id);
+                if (booking == null)
+                {
+                    response.Success = false;
+                    response.Message = "Booking not found.";
+                }
+                else
+                {
+                    response.Data = booking;
+                    response.Success = true;
+                    response.Message = "Booking retrieved successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse<Booking>> UpdateBookingAsync(Booking booking)
+        {
+            var response = new ServiceResponse<Booking>();
+            try
+            {
+                if (booking == null)
+                {
+                    throw new InvalidOperationException("Update failed: Booking is null");
+                }
+                // Find the existing booking in the database
+                var existingBooking = dbContext.Bookings
+                    .FirstOrDefault(b => b.BookingId == booking.BookingId);
+                if (existingBooking == null)
+                {
+                    throw new InvalidOperationException("Booking not found");
+                }
+                // Update the properties
+                dbContext.Entry(existingBooking).CurrentValues.SetValues(booking);
+                // Save the changes to the database
+                await dbContext.SaveChangesAsync();
+                response.Data = existingBooking;
+                response.Success = true;
+                response.Message = "Booking updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
     }
 }
+

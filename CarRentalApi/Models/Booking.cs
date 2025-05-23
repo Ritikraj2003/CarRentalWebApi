@@ -1,8 +1,13 @@
-﻿namespace CarRentalApi.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace CarRentalApi.Models
 {
     public class Booking
     {
-        public Guid? BookingId { get; set; } 
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BookingId { get; set; } 
 
         public string cartype { get; set; }
         public string BookingType { get; set; }

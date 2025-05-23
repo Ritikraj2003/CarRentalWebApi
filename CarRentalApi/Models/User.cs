@@ -1,8 +1,13 @@
-﻿namespace CarRentalApi.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace CarRentalApi.Models
 {
     public class User
     {
-        public Guid? id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string? Email { get; set; }
