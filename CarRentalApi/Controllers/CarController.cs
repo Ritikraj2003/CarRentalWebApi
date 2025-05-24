@@ -8,7 +8,7 @@ namespace CarRentalApi.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Authorize]
+    
     [ApiController]
     [Route("api/[controller]")]
     public class CarController : ControllerBase
@@ -26,44 +26,65 @@ namespace CarRentalApi.Controllers
             var cars = await _carRepository.GetAllCarsAsync();
             return Ok(cars);
         }
-        //[AllowAnonymous]
-        //[HttpPost]
-        //public async Task<IActionResult> Post([FromForm] Car car)
-        //{
-        //    if (car == null)
-        //        return BadRequest();
-
-        //    var result = await _carRepository.AddCarAsync(car);
-        //    return CreatedAtAction(nameof(Get), new { id = result.CarId }, result);
-        //}
         
+        [HttpPost]
+        public async Task<IActionResult> Post([FromForm] Car car)
+        {
+            try {
+                if (car == null)
+                    return BadRequest();
+
+                var result = await _carRepository.AddCarAsync(car);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult>GetByCarId(int id)
         {
+            try { 
             var car = await _carRepository.GetByCarId(id); 
-            return Ok(car); 
+            return Ok(car);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpDelete ("{id}")]
         public async Task<IActionResult>DeleteById(int id)
         {
+            try { 
             var car= await _carRepository.DeleteByCarId(id);
             return Ok(car);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-       
-        //[HttpPut ("{id}")]
-        //public async Task<IActionResult> UpdateByCarId( int id , Car car)
-        //{
-        //    var existingCar = await _carRepository.GetByCarId(id);
 
-        //    if(existingCar!= null)
-        //    {
-        //        car.CarId = existingCar.CarId;
-        //        var res = await _carRepository.UpdateCarAsync(car);
-        //        return Ok(res);
-        //    }
-        //    return BadRequest("Not Found");
-        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateByCarId(int id, Car car)
+        {
+            try
+            {
+                var res = await _carRepository.UpdateCarAsync(id, car);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
+        }
     }
 
 }

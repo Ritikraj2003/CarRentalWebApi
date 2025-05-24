@@ -14,50 +14,119 @@ namespace CarRentalApi.Repository
             this.DbContext = DbContext;
         }
 
-        public async Task<BookingType> AddBookingTypeAsync(BookingType bookingType)
+        public async Task<ServiceResponse<BookingType>> AddBookingTypeAsync(BookingType bookingType)
         {
-            // bookingType.BookingTypeId = Guid.NewGuid();
-            DbContext.BookingTypes.Add(bookingType);
-            await DbContext.SaveChangesAsync();
-            return bookingType;
-        }
-
-        public async Task<BookingType> DeleteByBookingTypeId(int id)
-        {
-            var c =  await GetByBookingTypeId(id);
-
-            DbContext.BookingTypes.Remove(c);
-            await DbContext.SaveChangesAsync();
-            return c;
-
-        }
-
-        public async Task<IEnumerable<BookingType>> GetAllBookingTypeAsync()
-        {
-             return await  DbContext.BookingTypes.ToListAsync();
-        }
-
-        public async Task<BookingType> GetByBookingTypeId(int id)
-        {
-             return await DbContext.BookingTypes.FirstOrDefaultAsync(c => c.BookingTypeId == id);
-        }
-        public async Task<BookingType> UpdateBookingTypeAsync(BookingType bookingType)
-        {
-            var existingBooking = await GetByBookingTypeId(bookingType.BookingTypeId);
-            // Find the existing booking in the database
-           
-            if (existingBooking == null)
+            var response = new ServiceResponse<BookingType>();
+            try
             {
-                throw new InvalidOperationException("Booking not found");
+                DbContext.BookingTypes.Add(bookingType);
+                await DbContext.SaveChangesAsync();
+                response.Data = bookingType;
+                response.Success = true;
+                response.Message = "Successfully updated";
             }
+            catch (Exception ex) 
+                {
+                response.Success = false;   
+                response.Message = ex.Message;
+                }
+            return response;    
 
-            // Update the properties
-            DbContext.Entry(existingBooking).CurrentValues.SetValues(bookingType);
-
-            // Save the changes to the database
-            await DbContext.SaveChangesAsync();
-
-            return existingBooking;
         }
+
+        public async Task<ServiceResponse<bool>> DeleteByBookingTypeId(int id)
+        {
+             var response = new ServiceResponse<bool>();
+            try
+            {
+                var bookingtype = await DbContext.BookingTypes.SingleOrDefaultAsync(x => x.BookingTypeId == id);
+                if (bookingtype != null)
+                {
+                    DbContext.Remove(bookingtype);
+                    await DbContext.SaveChangesAsync();
+                    response.Success = true;
+                    response.Message = "successfully Deleted";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public  async Task<ServiceResponse<List<BookingType>>> GetAllBookingTypeAsync()
+        {
+            var response = new ServiceResponse<List<BookingType>>();
+            try
+            {
+                var res =  await DbContext.BookingTypes.ToListAsync();
+                response.Data = res;
+                response.Success = true;
+                response.Message = "Success";
+            }
+            catch (Exception ex) 
+            { 
+            response.Success= false;
+            response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse<BookingType>> GetByBookingTypeId(int id)
+        {
+            var response = new ServiceResponse<BookingType>();
+            try
+            {
+                var res = await DbContext.BookingTypes.FirstOrDefaultAsync(x => x.BookingTypeId == id);
+                if (res != null)
+                {
+                    response.Data = res;
+                    response.Success = true;
+                    response.Message = "Sucess";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Booking type not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+
+        public async Task<ServiceResponse<BookingType>> UpdateBookingTypeAsync( int id,BookingType bookingType)
+        {
+            var response = new ServiceResponse<BookingType>();
+            try
+            {
+                var res = await DbContext.BookingTypes.FirstOrDefaultAsync(x => x.BookingTypeId == id);
+                if (res == null)
+                {
+                    response.Success = false;
+                    response.Message = "Booking not found.";
+                    return response;
+                }
+
+                res.type=bookingType.type;
+                await DbContext.SaveChangesAsync();
+                response.Data = res;
+                response.Success=true; 
+                response.Message="Updated";
+            }
+            catch (Exception ex)
+            {
+                response.Success=false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
     }
 }

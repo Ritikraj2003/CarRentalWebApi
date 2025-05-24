@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
-    [Authorize]
+   
     [Route("api/[controller]")]
     [ApiController]
     public class ContanctController : ControllerBase
@@ -22,50 +22,75 @@ namespace CarRentalApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllContact()
         {
-            var res= await contactRepository.GetAllAsync();
-            return Ok(res);
+            try
+            {
+                var res = await contactRepository.GetAllAsync();
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
        
         [HttpGet ("{id}")]
-        public async Task<IActionResult> GetContact(Guid id)
+        public async Task<IActionResult> GetContact(int id)
         {
             var res = await contactRepository.GetByIdAsync(id);
             return Ok(res);
         }
-        [AllowAnonymous]
+        
         [HttpPost]
        public async Task<IActionResult> CreateContact( Contact contact)
         {
-             var res = await contactRepository.CreateAsync(contact);
+            try
+            {
+                var res = await contactRepository.CreateAsync(contact);
 
-            return CreatedAtAction(nameof(GetContact), new { id = res.Id }, res);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
        
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteById(Guid id)
+        public async Task<IActionResult> DeleteById(int id)
         {
-            var deletedContact = await contactRepository.DeleteAsync(id);
-            if (deletedContact == null)
+            try
             {
-                return NotFound(); 
+                var deletedContact = await contactRepository.DeleteAsync(id);
+                if (deletedContact == null)
+                {
+                    return NotFound();
+                }
+                return Ok(deletedContact);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
-            return Ok(deletedContact); 
+           
         }
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateContact(Guid id, Contact contact)
+        public async Task<IActionResult> UpdateContact(int id, Contact contact)
         {
-            if ( contact.Id == null)
+            try
             {
-                return BadRequest("Contact ID Not found");
+                var updatedContact = await contactRepository.UpdateAsync(id, contact);
+                if (updatedContact == null)
+                {
+                    return NotFound();
+                }
+                return Ok(updatedContact);
             }
-            var updatedContact = await contactRepository.UpdateAsync(contact);
-            if (updatedContact == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            return Ok(updatedContact);
         }
 
     }

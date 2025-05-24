@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarRentalApi.Models
 {
-    public class Car
+    public class Car: GeneralData
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,5 +15,7 @@ namespace CarRentalApi.Models
 
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

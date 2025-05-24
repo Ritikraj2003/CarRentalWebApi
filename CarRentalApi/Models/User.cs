@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CarRentalApi.Models
 {
-    public class User
+    public class User: GeneralData
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,6 +15,8 @@ namespace CarRentalApi.Models
 
         public string? ResetToken { get; set; }
         public DateTime? ResetTokenExpiry { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
 
     public class ForgotPasswordRequest

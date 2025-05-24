@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using CarRentalApi.Models;
 
-public class Driver
+public class Driver: GeneralData
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,5 +13,9 @@ public class Driver
     [Phone]
     public string Phone { get; set; }
 
+    public string gmail {  get; set; }
+
     public string Address { get; set; }
+
+    public bool IsDeleted { get; set; } = false;
 }

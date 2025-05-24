@@ -28,59 +28,94 @@ namespace CarRentalApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromForm] Booking booking)
         {
-            if (booking == null)
+            try
             {
-                return BadRequest();
+                if (booking == null)
+                {
+                    return BadRequest();
+                }
+
+                var res = await ibookingRepository.AddBookingAsync(booking);
+
+                string subject = "New Booking Created";
+
+                var body = await gmailBody.SendEmail(booking);
+                await emailService.SendEmailAsync("ritikraj1092002@gmail.com", subject, body, isHtml: true);
+
+                // Send email to the user
+                var Body = await gmailBody.SendEmailToUser(booking);
+                subject = "Booking Confirmation";
+                await emailService.SendEmailAsync(booking.Email, subject, Body, isHtml: true);
+                return Ok(res);
             }
-
-            var res = await ibookingRepository.AddBookingAsync(booking);
-
-            string subject = "New Booking Created";
-           
-            var body= await gmailBody.SendEmail(booking);
-            await emailService.SendEmailAsync("ritikraj1092002@gmail.com", subject, body, isHtml: true);
-
-            // Send email to the user
-            var Body= await gmailBody.SendEmailToUser(booking);
-            subject = "Booking Confirmation";
-            await emailService.SendEmailAsync(booking.Email, subject, Body, isHtml: true);
-            return Ok(res);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var cars = await ibookingRepository.GetAllBookingAsync();
-            return Ok(cars);
+            try
+            {
+                var cars = await ibookingRepository.GetAllBookingAsync();
+                return Ok(cars);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        
+
+
         [HttpGet("{id}")]
-        public async Task<IActionResult>GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var res = await ibookingRepository.GetByIdAsync(id);
-            return Ok(res);
+            try
+            {
+                var res = await ibookingRepository.GetByIdAsync(id);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteById(int id)
         {
-            var res = await ibookingRepository.DeleteByIdAsyncAsync(id);
-            return Ok(res);
+            try
+            {
+                var res = await ibookingRepository.DeleteByIdAsyncAsync(id);
+                return Ok(res);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking( int id,[FromBody] Booking booking)
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] Booking booking)
         {
-            if (booking.BookingId == null)
+            try
             {
-                booking.BookingId = id;
+                var updatedBooking = await ibookingRepository.UpdateBookingAsync(id, booking);
+                return Ok(updatedBooking);
             }
-            var updatedBooking = await ibookingRepository.UpdateBookingAsync(booking);
-            return Ok(updatedBooking);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); 
+            }
         }
+
     }
 }
 

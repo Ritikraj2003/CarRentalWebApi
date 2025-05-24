@@ -105,22 +105,21 @@ namespace CarRentalApi.Repository
             return response;
         }
 
-        public async Task<ServiceResponse<Booking>> UpdateBookingAsync(Booking booking)
+        public async Task<ServiceResponse<Booking>> UpdateBookingAsync(int id,Booking booking)
         {
             var response = new ServiceResponse<Booking>();
             try
             {
-                if (booking == null)
-                {
-                    throw new InvalidOperationException("Update failed: Booking is null");
-                }
-                // Find the existing booking in the database
-                var existingBooking = dbContext.Bookings
-                    .FirstOrDefault(b => b.BookingId == booking.BookingId);
+                var existingBooking = dbContext.Bookings.FirstOrDefault(b => b.BookingId == id);
                 if (existingBooking == null)
                 {
-                    throw new InvalidOperationException("Booking not found");
+                    throw new InvalidOperationException("Booking Id Not Found");
+                    response.Success = false;
+                    response.Message = "Booking Not Found";
+                    return response;
                 }
+                
+                booking.BookingId = id; // add id
                 // Update the properties
                 dbContext.Entry(existingBooking).CurrentValues.SetValues(booking);
                 // Save the changes to the database

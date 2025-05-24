@@ -49,12 +49,8 @@ namespace CarRentalApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBookingType( int id ,[FromBody] BookingType bookingType)
         {
-             bookingType.BookingTypeId=id;
-            if ( bookingType.BookingTypeId == null)
-            {
-                return BadRequest("BookingType ID Not found");
-            }
-            var res = await ibookingTypeRepository.UpdateBookingTypeAsync(bookingType);
+            
+            var res = await ibookingTypeRepository.UpdateBookingTypeAsync( id, bookingType);
             return Ok(res);
         }
     }

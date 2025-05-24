@@ -7,7 +7,7 @@ namespace CarRentalApi.Interface
         Task<ServiceResponse<Booking>> GetByIdAsync(int id);
         Task<ServiceResponse<List<Booking>>> GetAllBookingAsync();
         Task<ServiceResponse<Booking>> AddBookingAsync(Booking booking);
-        Task<ServiceResponse<Booking>> UpdateBookingAsync( Booking booking);
+        Task<ServiceResponse<Booking>> UpdateBookingAsync(int id, Booking booking);
         Task<ServiceResponse<bool>> DeleteByIdAsyncAsync(int id);
     }
 }

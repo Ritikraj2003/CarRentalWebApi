@@ -14,47 +14,119 @@ namespace CarRentalApi.Repository
             this.dbContext = dbContext;
         }
 
-        public  async  Task<Contact> CreateAsync(Contact contact)
+        public async Task<ServiceResponse<Contact>> CreateAsync(Contact contact)
         {
-            // contact.Id = Guid.NewGuid();
-            dbContext.Contacts.Add(contact);
-            await dbContext.SaveChangesAsync();
-            return contact;
-        }
-
-        public async Task<Contact> DeleteAsync(Guid id)
-        {
-             var c = await GetByIdAsync(id);
-             dbContext.Contacts.Remove(c);
-             await dbContext.SaveChangesAsync();
-            return c;
-        }
-
-        public async Task<IEnumerable<Contact>> GetAllAsync()
-        {
-            return await dbContext.Contacts.ToListAsync();
-        }
-
-        public async Task<Contact?> GetByIdAsync(Guid id)
-        {
-            return await dbContext.Contacts.FirstOrDefaultAsync(c => c.Id == id);
-        }
-
-        public async Task<Contact> UpdateAsync(Contact contact)
-        {
-            var existingContact = dbContext.Contacts.FirstOrDefault(c => c.Id == contact.Id);
-            if (existingContact == null)
+            var response = new ServiceResponse<Contact>();
+            try
             {
-                throw new InvalidOperationException("Booking not found");
+                dbContext.Contacts.Add(contact);
+                await dbContext.SaveChangesAsync();
+
+                response.Data = contact;
+                response.Success = true;
+                response.Message = "Success";
+
             }
-
-            // Update the properties
-            dbContext.Entry(existingContact).CurrentValues.SetValues(contact);
-
-            // Save the changes to the database
-            await dbContext.SaveChangesAsync();
-
-            return existingContact;
+            catch (Exception ex)
+            {
+                response.Success = false;   
+                response.Message = ex.Message;  
+            }
+            return response;
         }
+
+        public async Task<ServiceResponse<bool>> DeleteAsync(int id)
+        {
+            var response = new ServiceResponse<bool>();
+            try
+            {
+                var res = await dbContext.Contacts.FindAsync(id);
+                if (res != null)
+                {
+                    dbContext.Remove(res);
+                    await dbContext.SaveChangesAsync();
+                    response.Success = true;
+                    response.Message = "Deleted";
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "dataNot Found";
+                }
+            }
+            catch (Exception ex) 
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+
+        }
+
+        public async Task<ServiceResponse<List<Contact>>> GetAllAsync()
+        {
+              var response= new ServiceResponse<List<Contact>>();
+            try
+            {
+                var res = await dbContext.Contacts.ToListAsync();
+
+                response.Data= res;
+                response.Success = true;
+                response.Message = "Sucess";
+
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        public async Task<ServiceResponse<Contact>> GetByIdAsync(int id)
+        {
+            var response = new ServiceResponse<Contact>();
+            try
+            {
+                var res = await dbContext.Contacts.FindAsync(id);
+                response.Data=res; 
+                response.Success = true;
+                response.Message = "Success";
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;    
+        }
+
+        public async Task<ServiceResponse<Contact>> UpdateAsync( int id,Contact contact)
+        {
+            var response = new ServiceResponse<Contact>();
+            try
+            {
+                var existing = await dbContext.Contacts.FindAsync(id);
+                if (existing != null)
+                {
+                    dbContext.Entry(existing).CurrentValues.SetValues(contact);
+                    // Save the changes to the database
+                    await dbContext.SaveChangesAsync();
+                    response.Data = existing;
+                    response.Success = true;
+                    response.Message = "Updated";
+                    
+                }
+            }
+            
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            return response;
+        }
+
+        
     }
 }

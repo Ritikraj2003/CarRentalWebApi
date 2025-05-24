@@ -4,10 +4,11 @@ namespace CarRentalApi.Interface
 {
     public interface IContactRepository
     {
-        Task<IEnumerable<Contact>> GetAllAsync();
-        Task<Contact?> GetByIdAsync(Guid id);
-        Task<Contact> CreateAsync(Contact contact);
-        Task<Contact> DeleteAsync(Guid id);
-        Task<Contact> UpdateAsync(Contact contact);
+       
+        Task<ServiceResponse<Contact>> GetByIdAsync(int id);
+        Task<ServiceResponse<List<Contact>>> GetAllAsync();
+        Task<ServiceResponse<Contact>> CreateAsync(Contact contact);
+        Task<ServiceResponse<Contact>> UpdateAsync( int id,Contact contact);
+        Task<ServiceResponse<bool>> DeleteAsync(int id);
     }
 }

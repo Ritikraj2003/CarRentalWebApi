@@ -99,7 +99,7 @@
             var response = new ServiceResponse<Car>();
             try
             {
-                var car = _context.Cars.FirstOrDefault(c => c.CarId == id);
+                var car =   _context.Cars.FirstOrDefault(c => c.CarId == id);
                 if (car != null)
                 {
                     response.Data = car;
@@ -120,12 +120,12 @@
             return response;
         }
 
-        public async Task<ServiceResponse<Car>> UpdateCarAsync(Car car)
+        public async Task<ServiceResponse<Car>> UpdateCarAsync(int id, Car car)
         {
             var response = new ServiceResponse<Car>();
             try
             {
-                var existingCar = _context.Cars.FirstOrDefault(c => c.CarId == car.CarId);
+                var existingCar = _context.Cars.FirstOrDefault(c => c.CarId == id);
                 if (existingCar == null)
                 {
                     response.Success = false;

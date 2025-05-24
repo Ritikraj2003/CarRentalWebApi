@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CarRentalApi.Models
 {
-    public class Booking
+    public class Booking: GeneralData
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -21,5 +21,16 @@ namespace CarRentalApi.Models
         public DateOnly Dropdate { get; set; }
         public DateTime Droptime { get; set; }
         public DateOnly BookingDate { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
+
+        public bool IsSended { get; set; }
+
+        public  string? CompanyName {  get; set; }
+        public string? CompanyDescription { get; set; }
+        public bool? CompanyEnabled { get; set; } = false;
+
+
+
     }
 }
