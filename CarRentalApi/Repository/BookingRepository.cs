@@ -2,6 +2,7 @@
 using CarRentalApi.DbContext;
 using CarRentalApi.Interface;
 using CarRentalApi.Models;
+using MailKit.Search;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,19 @@ namespace CarRentalApi.Repository
                 await dbContext.SaveChangesAsync();
                 response.Data = booking;
                 response.Success = true;
+                if (response.Success)
+                {
+                    Notification notification = new Notification
+                    {
+                        NotificationFromId= booking.BookingId,
+                        CreatedOn = DateTime.UtcNow,
+                        NotificationStatus = false,
+                        Message = "New Order Created"
+
+                    };
+                   dbContext.Notifications.Add( notification);
+                    await dbContext.SaveChangesAsync();
+                }
                 response.Message = "Booking added successfully.";
             }
 

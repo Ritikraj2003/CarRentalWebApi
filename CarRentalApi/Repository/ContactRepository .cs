@@ -25,6 +25,19 @@ namespace CarRentalApi.Repository
                 response.Data = contact;
                 response.Success = true;
                 response.Message = "Success";
+                if (response.Success)
+                {
+                    Notification notification = new Notification
+                    {
+                        NotificationFromId = contact.Id,
+                        CreatedOn = DateTime.UtcNow,
+                        NotificationStatus = false,
+                        Message = "New Order Created"
+
+                    };
+                    dbContext.Notifications.Add(notification);
+                    await dbContext.SaveChangesAsync();
+                }
 
             }
             catch (Exception ex)
