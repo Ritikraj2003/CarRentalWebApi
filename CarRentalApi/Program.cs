@@ -99,6 +99,7 @@ builder.Services.AddScoped<IAuthentication, AuthenticationRepository>();
 builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<INotification, NotificationRepository>();
+builder.Services.AddScoped<IConfirmBookingRepository, ConfirmBookingRepository>();
 
 
 

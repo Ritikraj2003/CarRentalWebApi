@@ -7,8 +7,7 @@ namespace CarRentalApi.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int BookingId { get; set; } 
-
+        public int BookingId { get; set; }
         public string cartype { get; set; }
         public string BookingType { get; set; }
         public  int Phone_no { get; set; }
@@ -21,16 +20,14 @@ namespace CarRentalApi.Models
         public DateOnly Dropdate { get; set; }
         public DateTime Droptime { get; set; }
         public DateOnly BookingDate { get; set; }
-
         public bool IsDeleted { get; set; } = false;
-
-        public bool IsSended { get; set; }
-
+        public bool Isconfirm { get; set; } = false;
         public  string? CompanyName {  get; set; }
         public string? CompanyDescription { get; set; }
         public bool? CompanyEnabled { get; set; } = false;
-
-
-
+        
     }
+
+   
+           
 }

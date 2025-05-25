@@ -14,6 +14,7 @@
         public DbSet<User> Users { get; set; }  
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<ConfirmBooking> ConfirmBooking { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
