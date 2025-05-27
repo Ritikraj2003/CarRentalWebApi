@@ -105,6 +105,19 @@ builder.Services.AddScoped<IConfirmBookingRepository, ConfirmBookingRepository>(
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // your Angular app URL
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
+
 // 3. Add controller services
 builder.Services.AddControllers();
 
@@ -114,6 +127,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseCors("AllowAngularApp");
 // 5. Enable Swagger only in development mode
 if (app.Environment.IsDevelopment())
 {
