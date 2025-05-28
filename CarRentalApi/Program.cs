@@ -9,10 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Load connection string and configure EF Core with SQL Server and retry logic
+// 1. Configure EF Core with SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -20,9 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-
-
-// JWT Authentication
+// 2. JWT Authentication Setup
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
@@ -37,37 +34,23 @@ builder.Services.AddAuthentication("Bearer")
             ValidAudience = config["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Key"]))
         };
-
-        // 👇 Accept token directly without "Bearer" prefix
-        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                var token = context.Request.Headers["Authorization"].FirstOrDefault();
-                if (!string.IsNullOrEmpty(token))
-                {
-                    context.Token = token; // Use raw token directly
-                }
-                return Task.CompletedTask;
-            }
-        };
     });
 
 builder.Services.AddAuthorization();
 
-// Swagger config with JWT support (no "Bearer" required)
+// 3. Swagger with JWT support (with Bearer token format)
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new() { Title = "Car Booking API ", Version = "v1" });
+    options.SwaggerDoc("v1", new() { Title = "Car Booking API", Version = "v1" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey, // 👈 Required for raw token
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Paste your JWT token directly without 'Bearer '"
+        Description = "Enter JWT token with Bearer prefix. Example: Bearer eyJhbGciOiJIUzI1..."
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -86,64 +69,52 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddSingleton<EmailService>();
-builder.Services.AddSingleton<GmailBody>();
-builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
-
-// 2. Register your repositories/services
+// 4. Register services and repositories
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<IbookingTypeRepository, BookingTypeRepository>();
 builder.Services.AddScoped<IAuthentication, AuthenticationRepository>();
 builder.Services.AddScoped<IDriverRepository, DriverRepository>();
-builder.Services.AddSingleton<TokenService>();
-builder.Services.AddScoped<INotification, NotificationRepository>();
 builder.Services.AddScoped<IConfirmBookingRepository, ConfirmBookingRepository>();
-
-
-
+builder.Services.AddScoped<INotification, NotificationRepository>();
+builder.Services.AddSingleton<TokenService>();
+builder.Services.AddSingleton<EmailService>();
+builder.Services.AddSingleton<GmailBody>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddHttpContextAccessor();
 
+// 5. CORS for Angular frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:4200") // your Angular app URL
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
-
-
-// 3. Add controller services
+// 6. MVC Controllers
 builder.Services.AddControllers();
-
-// 4. Add Swagger/OpenAPI services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors("AllowAngularApp");
-// 5. Enable Swagger only in development mode
+// 7. Middlewares
+app.UseCors("AllowAll");
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// 6. Serve static files (for uploaded images like /Uploads/image.jpg)
 app.UseStaticFiles();
-
-// 7. Enable HTTPS redirection and authorization
 app.UseHttpsRedirection();
+
+app.UseAuthentication(); 
 app.UseAuthorization();
 
-// 8. Map controller endpoints
 app.MapControllers();
-
-// 9. Run the application
 app.Run();
