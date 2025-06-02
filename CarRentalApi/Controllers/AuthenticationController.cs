@@ -32,7 +32,7 @@ namespace CarRentalApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] User user)
+        public async Task<IActionResult> Login([FromBody] UserLoginRequest user)
         {
             try
             {
@@ -50,10 +50,19 @@ namespace CarRentalApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(User user)
+        public async Task<IActionResult> CreateUser(CreateUserRequest userRequest)
         {
             try
             {
+                var user = new User
+                {
+
+                    UserName = userRequest.UserName,
+                    Email = userRequest.Email,
+                    Password = userRequest.Password, // Assume you have a HashPassword method
+                    Phone = userRequest.Phone // Uncomment if you want to store phone numbers
+                };
+
                 var res = await authentication.Add(user);
                 return Ok(res);
             }
@@ -77,7 +86,7 @@ namespace CarRentalApi.Controllers
                 user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(5);
                 await authentication.UpdateUser(user);
 
-                var resetLink = $"https://localhost:7055/api/authentication/reset-password?token={resetToken}";
+                var resetLink = $"http://rirajtik-001-site1.ktempurl.com/api/authentication/reset-password?token={resetToken}";
                 var body = $"Click the link to reset your password (valid for 5 minutes): <a href='{resetLink}'>Reset Password</a>";
 
                 await emailService.SendEmailAsync(user.Email, "Reset Your Password", body, true);

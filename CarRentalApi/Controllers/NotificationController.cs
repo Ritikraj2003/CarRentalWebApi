@@ -1,10 +1,12 @@
 ﻿using CarRentalApi.Interface;
 using CarRentalApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
-   
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ContanctController : ControllerBase
@@ -39,7 +39,8 @@ namespace CarRentalApi.Controllers
             var res = await contactRepository.GetByIdAsync(id);
             return Ok(res);
         }
-        
+
+        [AllowAnonymous]
         [HttpPost]
        public async Task<IActionResult> CreateContact( Contact contact)
         {

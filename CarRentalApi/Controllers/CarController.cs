@@ -7,7 +7,6 @@ namespace CarRentalApi.Controllers
     using CarRentalApi.Models;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
@@ -19,7 +18,7 @@ namespace CarRentalApi.Controllers
         {
             _carRepository = carRepository;
         }
-        
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
         {

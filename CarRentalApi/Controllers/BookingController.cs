@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalApi.Controllers
 {
-    
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookingController : ControllerBase
@@ -24,7 +24,8 @@ namespace CarRentalApi.Controllers
             this.emailService = emailService;
             this.gmailBody = gmailBody;
         }
-       
+
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromForm] Booking booking)
         {
