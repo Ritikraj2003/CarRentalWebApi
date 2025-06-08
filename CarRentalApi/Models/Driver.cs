@@ -10,7 +10,7 @@ public class Driver: GeneralData
 
     public string Name { get; set; }
 
-    public int Phone { get; set; }
+    public string Phone { get; set; }
 
     public string gmail {  get; set; }
 

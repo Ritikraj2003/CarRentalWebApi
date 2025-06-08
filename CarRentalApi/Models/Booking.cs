@@ -10,7 +10,7 @@ namespace CarRentalApi.Models
         public int BookingId { get; set; }
         public string cartype { get; set; }
         public string BookingType { get; set; }
-        public  int Phone_no { get; set; }
+        public string Phone_no { get; set; }
         public string Name {  get; set; }
         public string Email {  get; set; }
         public string PickupLocation {  get; set; }
