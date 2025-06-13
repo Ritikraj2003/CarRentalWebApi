@@ -5,6 +5,7 @@ using CarRentalApi.Models;
 using CarRentalApi.Repository;
 using CarRentalApi.TokenGenrator;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -104,11 +105,16 @@ var app = builder.Build();
 // 7. Middlewares
 app.UseCors("AllowAll");
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Uploads")),
+    RequestPath = new PathString("/Uploads")
+});
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
