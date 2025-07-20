@@ -43,7 +43,7 @@ namespace CarRentalApi.Controllers
             
 
         }
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult>GetByCarId(int id)
         {
